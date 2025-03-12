@@ -4,10 +4,12 @@ const db =require ("./db")
 
 const app = express();
 
-const PORT = process.env.PORT || 3005;
+const PORT = process.env.PORT || 3008;
 const userRoute =require("./routes/userRoute");
 const eventRoute = require("./routes/eventRoute");
 const adminRoute = require("./routes/adminRoute");
+const reviewRoutes = require("./routes/reviewRoutes");
+
 
 
 
@@ -37,6 +39,7 @@ app.use(express.json());
 app.use("/api/users", userRoute);
 app.use("/api/events", eventRoute);
 app.use("/api/admin",adminRoute);
+app.use("/api/reviews", reviewRoutes);
 
 
 

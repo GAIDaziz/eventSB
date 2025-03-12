@@ -59,7 +59,7 @@ const loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role,username: user.name },//on a rajouter userrole pour la generation de tokken
+      { id: user.id, email: user.email, role: user.role,username: user.name,id:user.id },//on a rajouter userrole pour la generation de tokken
       process.env.JWT_SECRET || "secretkey", // Use a strong random secret here
       { expiresIn: "1h" }
     );
