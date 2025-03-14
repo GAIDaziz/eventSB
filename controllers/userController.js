@@ -1,9 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const user = require("../models/userModel"); // Assuming this is the correct path
-const db = require("../db");
+const User = require("../models/userModel");
 
-// Registration
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -12,31 +10,25 @@ const registerUser = async (req, res) => {
   }
 
   try {
-    const [userExistsByName] = await db.query("SELECT * FROM users WHERE name = ?", [name]);
-
+    const userExistsByName = await User.getUserByName(name);
     if (userExistsByName.length > 0) {
       return res.status(400).json({ error: "Ce nom existe déjà!" });
     }
 
-    const [userExistsByEmail] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
-
+    const userExistsByEmail = await User.getUserByEmail(email);
     if (userExistsByEmail.length > 0) {
       return res.status(400).json({ error: "Cet email existe déjà!" });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    await db.query("INSERT INTO users (name, email, password) VALUES(?, ?, ?)", [name, email, hashedPassword]);
+    await User.createUser(name, email, password);
 
     res.status(201).json({ message: "Utilisateur créé avec succès" });
   } catch (err) {
-    console.error(err); // Log the error for debugging purposes
+    console.error(err);
     res.status(500).json({ error: "Erreur lors de l'enregistrement de l'utilisateur" });
   }
 };
 
-// Login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -45,7 +37,7 @@ const loginUser = async (req, res) => {
   }
 
   try {
-    const [users] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    const users = await User.getUserByEmail(email);
 
     if (users.length === 0) {
       return res.status(400).json({ error: "Email incorrect" });
@@ -59,19 +51,16 @@ const loginUser = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role,username: user.name,id:user.id },//on a rajouter userrole pour la generation de tokken
-      process.env.JWT_SECRET || "secretkey", // Use a strong random secret here
+      { id: user.id, email: user.email, role: user.role, username: user.name },
+      process.env.JWT_SECRET || "secretkey",
       { expiresIn: "1h" }
     );
 
     res.json({ message: "Connexion réussie", token });
   } catch (err) {
-    console.error(err); // Log the error for debugging purposes
+    console.error(err);
     res.status(500).json({ error: "Erreur lors de la connexion" });
   }
 };
 
-module.exports = {
-  registerUser,
-  loginUser,
-};
+module.exports = { registerUser, loginUser };
