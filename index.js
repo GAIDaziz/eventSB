@@ -1,17 +1,11 @@
 const express = require ('express') ;
-
 const db =require ("./db")
-
 const app = express();
-
 const PORT = process.env.PORT || 3008;
 const userRoute =require("./routes/userRoute");
 const eventRoute = require("./routes/eventRoute");
 const adminRoute = require("./routes/adminRoute");
 const reviewRoutes = require("./routes/reviewRoutes");
-
-
-
 
 app.use((req, res, next) => {
     // Autoriser uniquement le frontend sur localhost:5173
@@ -33,7 +27,6 @@ app.use((req, res, next) => {
 
     next();
 });
-
 
 app.use(express.json());
 app.use("/api/users", userRoute);
