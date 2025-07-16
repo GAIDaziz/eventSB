@@ -5,6 +5,7 @@ const Event = {
     const sql = 
       "INSERT INTO events (title, description, date,  location, img, user_id) VALUES (?, ?, ?, ?, ?, ?)";
     const values = [title, description, date,  location, img, userId];
+    console.log( "Values:", values);
     const [result] = await db.execute(sql, values);
     return result.insertId;
   },

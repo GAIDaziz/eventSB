@@ -6,13 +6,13 @@ const createEvent = async (req, res) => {
   }
   const imageData = req.file.buffer;
 
-  const { title, date, description, location } = req.body;
+  const { title, description, date, location } = req.body;
   if (!title || !date || !description || !location) {
     return res.status(400).json({ error: "Tous les champs sont requis" });
   }
 
   try {
-    const eventId = await Event.createEvent(title, date, description, location, imageData, req.user.id);
+    const eventId = await Event.createEvent(title, description, date,  location, imageData, req.user.id);
     res.status(201).json({ message: "Événement créé avec succès", eventId });
   } catch (error) {
     console.error("Erreur lors de l'insertion de l'événement:", error);
