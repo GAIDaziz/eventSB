@@ -31,6 +31,22 @@ const getEvents = async (req, res) => {
     res.status(500).json({ error: "Erreur interne du serveur" });
   }
 };
+const getEventById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const event = await Event.getEventById(id);
+
+    if (!event) {
+      return res.status(404).json({ error: "Événement non trouvé" });
+    }
+
+    res.json(event);
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l'événement:", error);
+    res.status(500).json({ error: "Erreur interne du serveur" });
+  }
+};
 
 const getImage = async (req, res) => {
   try {
@@ -51,5 +67,6 @@ const getImage = async (req, res) => {
 module.exports = {
   createEvent,
   getEvents,
+  getEventById,
   getImage,
 };
